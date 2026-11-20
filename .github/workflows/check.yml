@@ -1,0 +1,23 @@
+name: Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  check:
+    runs-on: k8s-amd64
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Install yq
+        run: |
+          curl -sfL https://github.com/mikefarah/yq/releases/download/v4.44.3/yq_linux_amd64 -o "$RUNNER_TEMP/yq"
+          chmod +x "$RUNNER_TEMP/yq"
+      - name: Validate fleet.yaml syntax and shape
+        run: |
+          "$RUNNER_TEMP/yq" eval . fleet.yaml > /dev/null
+          missing=$("$RUNNER_TEMP/yq" eval '.pis[] | select(.ssh_host == null or .ssh_user == null) | key' fleet.yaml)
+          if [ -n "$missing" ]; then
+            echo "pis missing ssh_host or ssh_user: $missing"
+            exit 1
+          fi

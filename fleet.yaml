@@ -1,0 +1,13 @@
+pis:
+  pi1:
+    ssh_host: pi1.local
+    ssh_user: pi
+  pizero:
+    ssh_host: pizero.local
+    ssh_user: pi
+  pi5-8:
+    ssh_host: pi5-8.local
+    ssh_user: pi
+  pi5-16:
+    ssh_host: pi5-16.local
+    ssh_user: pi
