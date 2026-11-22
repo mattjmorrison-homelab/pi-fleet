@@ -1,0 +1,23 @@
+name: Resolve Pi target
+description: >-
+  Looks up a Pi's SSH host/user from this repo's own fleet.yaml by name.
+inputs:
+  name:
+    description: Pi name, a key under fleet.yaml's `pis:`.
+    required: true
+outputs:
+  ssh-host:
+    description: The Pi's SSH host.
+    value: ${{ steps.resolve.outputs.ssh-host }}
+  ssh-user:
+    description: The Pi's SSH user.
+    value: ${{ steps.resolve.outputs.ssh-user }}
+runs:
+  using: composite
+  steps:
+    - id: resolve
+      shell: bash
+      run: bash "${{ github.action_path }}/resolve-target.sh"
+      env:
+        NAME: ${{ inputs.name }}
+        FLEET_YAML: ${{ github.action_path }}/../fleet.yaml
